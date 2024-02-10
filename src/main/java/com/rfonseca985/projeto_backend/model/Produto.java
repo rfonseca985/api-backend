@@ -1,11 +1,20 @@
 package com.rfonseca985.projeto_backend.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Produto {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
     private String nome;
+
     private Integer quantidade;
+
     private Double valor;
+
     private String observacao;
 
     public Integer getId() {
