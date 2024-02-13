@@ -3,51 +3,93 @@ package com.rfonseca985.projeto_backend.services;
 import com.rfonseca985.projeto_backend.model.Produto;
 import com.rfonseca985.projeto_backend.model.excepition.ResourceNotFoundExcepition;
 import com.rfonseca985.projeto_backend.repository.ProdutoRepository;
-import com.rfonseca985.projeto_backend.repository.ProdutoRepositoryOld;
+import com.rfonseca985.projeto_backend.shared.ProdutoDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+/**
+ * Serviço responsável por operações relacionadas a produtos.
+ */
 @Service
 public class ProdutoService {
 
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    public List<Produto> obterTodos(){
-        return produtoRepository.findAll();
+    /**
+     * Obtém uma lista de todos os produtos no sistema.
+     *
+     * @return Lista de objetos ProdutoDTO representando os produtos.
+     */
+    public List<ProdutoDTO> obterTodos() {
+        List<Produto> produtos = produtoRepository.findAll();
+        return produtos.stream()
+                .map(produto -> new ModelMapper().map(produto, ProdutoDTO.class))
+                .collect(Collectors.toList());
     }
 
-    public Optional<Produto> obterPorId(Integer id){
-        return produtoRepository.findById(id);
+    /**
+     * Obtém um produto pelo seu ID.
+     *
+     * @param id O ID do produto a ser obtido.
+     * @return Optional contendo um objeto ProdutoDTO se encontrado.
+     * @throws ResourceNotFoundExcepition Se o produto com o ID fornecido não for encontrado.
+     */
+    public Optional<ProdutoDTO> obterPorId(Integer id) {
+        Optional<Produto> produtos = produtoRepository.findById(id);
+        if (produtos.isEmpty()) {
+            throw new ResourceNotFoundExcepition("Produto com id: " + id + " não encontrado");
+        }
+        ProdutoDTO dto = new ModelMapper().map(produtos.get(), ProdutoDTO.class);
+        return Optional.of(dto);
     }
 
-    public Produto adicionar(Produto produto){
-        return produtoRepository.save(produto);
+    /**
+     * Adiciona um novo produto ao sistema.
+     *
+     * @param produtoDto O objeto ProdutoDTO a ser adicionado.
+     * @return O ProdutoDTO do produto adicionado.
+     */
+    public ProdutoDTO adicionar(ProdutoDTO produtoDto) {
+        produtoDto.setId(null);
+        ModelMapper mapper = new ModelMapper();
+        Produto produto = mapper.map(produtoDto, Produto.class);
+        produto = produtoRepository.save(produto);
+        produtoDto.setId(produto.getId());
+        return produtoDto;
     }
-    public void deletar(Integer id){
+
+    /**
+     * Deleta um produto pelo seu ID.
+     *
+     * @param id O ID do produto a ser deletado.
+     * @throws ResourceNotFoundExcepition Se o produto com o ID fornecido não for encontrado.
+     */
+    public void deletar(Integer id) {
+        Optional<Produto> produto = produtoRepository.findById(id);
+        if (produto.isEmpty()) {
+            throw new ResourceNotFoundExcepition("Produto id: " + id + " não encontrado");
+        }
         produtoRepository.deleteById(id);
     }
 
-    public Produto atualizar(Integer id, Produto produtoAtualizado){
-        // Verificar se o produto com o ID fornecido existe no banco de dados
-        Optional<Produto> produtoExistenteOptional = produtoRepository.findById(id);
-
-        if (produtoExistenteOptional.isPresent()) {
-            // Atualizar os dados do produto existente com os dados do produtoAtualizado
-            Produto produtoExistente = produtoExistenteOptional.get();
-            produtoExistente.setNome(produtoAtualizado.getNome());
-            produtoExistente.setValor(produtoAtualizado.getValor());
-            produtoExistente.setObservacao(produtoAtualizado.getObservacao());
-            // Outros campos que você deseja atualizar
-
-            // Salvar as alterações no banco de dados
-            return produtoRepository.save(produtoExistente);
-        } else {
-            // Se o produto com o ID fornecido não existe, você pode escolher lançar uma exceção ou lidar de outra forma
-            // Neste exemplo, estamos retornando null, mas é recomendável tratar isso de uma maneira mais robusta
-            return null;
-        }
+    /**
+     * Atualiza um produto pelo seu ID.
+     *
+     * @param id         O ID do produto a ser atualizado.
+     * @param produtoDto O ProdutoDTO com as informações atualizadas.
+     * @return O ProdutoDTO atualizado.
+     */
+    public ProdutoDTO atualizar(Integer id, ProdutoDTO produtoDto) {
+        produtoDto.setId(id);
+        ModelMapper mapper = new ModelMapper();
+        Produto produto = mapper.map(produtoDto, Produto.class);
+        produtoRepository.save(produto);
+        return produtoDto;
     }
 }
