@@ -1,6 +1,5 @@
 package com.rfonseca985.projeto_backend.view.controller;
 
-import com.rfonseca985.projeto_backend.model.Produto;
 import com.rfonseca985.projeto_backend.services.ProdutoService;
 import com.rfonseca985.projeto_backend.shared.ProdutoDTO;
 import com.rfonseca985.projeto_backend.view.model.ProdutoRequest;

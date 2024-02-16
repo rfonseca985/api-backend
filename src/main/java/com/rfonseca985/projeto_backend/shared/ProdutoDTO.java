@@ -1,9 +1,5 @@
 package com.rfonseca985.projeto_backend.shared;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
 /**
  * DTO (Data Transfer Object) para a entidade Produto.
  */

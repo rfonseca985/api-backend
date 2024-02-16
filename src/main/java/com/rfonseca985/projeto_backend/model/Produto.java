@@ -1,6 +1,9 @@
 package com.rfonseca985.projeto_backend.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 /**
  * Classe que representa um produto no sistema.

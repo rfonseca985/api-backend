@@ -5,7 +5,6 @@ import com.rfonseca985.projeto_backend.model.excepition.ResourceNotFoundExcepiti
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
