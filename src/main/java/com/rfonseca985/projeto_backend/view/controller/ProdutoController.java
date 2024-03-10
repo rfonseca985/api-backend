@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  * Controlador para manipulação de operações relacionadas a produtos via API REST.
  */
 @RestController
+@CrossOrigin(origins ="*")
 @RequestMapping("/api/produtos")
 public class ProdutoController {
 
